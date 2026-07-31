@@ -1,0 +1,21 @@
+﻿@model StajTakipp.WebUI.Models.LoginViewModel
+
+<h2>Giriş Yap</h2>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Login" method="post" style="max-width: 400px;">
+    <div class="mb-3">
+        <label>Kullanıcı Adı</label>
+        <input asp-for="KullaniciAdi" class="form-control" />
+    </div>
+    <div class="mb-3">
+        <label>Şifre</label>
+        <input asp-for="Sifre" class="form-control" type="password" />
+    </div>
+    <button type="submit" class="btn btn-primary">Giriş Yap</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,30 @@
+﻿@model StajTakipp.WebUI.Models.KurumViewModel
+
+<h2>Yeni Kurum Ekle</h2>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Ekle" method="post">
+    <div>
+        <label>Kurum Adı</label>
+        <input asp-for="KurumAdi" class="form-control" />
+        <span asp-validation-for="KurumAdi" class="text-danger"></span>
+    </div>
+    <div>
+        <label>Adres</label>
+        <input asp-for="Adres" class="form-control" />
+    </div>
+    <div>
+        <label>Telefon</label>
+        <input asp-for="Telefon" class="form-control" />
+    </div>
+    <div>
+        <label>Sektör</label>
+        <input asp-for="Sektor" class="form-control" />
+    </div>
+    <button type="submit">Kaydet</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,245 @@
+﻿@model List<StajTakipp.WebUI.Models.StajyerViewModel>
+@{
+    var kurumlar = ViewBag.Kurumlar as List<StajTakipp.WebUI.Models.KurumViewModel>;
+    var mentorler = ViewBag.Mentorler as List<StajTakipp.WebUI.Models.MentorViewModel>;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Stajyer Listesi</h2>
+    <a asp-action="Ekle" class="btn btn-primary">+ Yeni Stajyer Ekle</a>
+</div>
+
+<!-- Arama ve Filtreler -->
+<div class="card mb-3 no-print">
+    <div class="card-body">
+        <div class="row g-2">
+            <div class="col-md-3">
+                <input type="text" id="filtreAdSoyad" class="form-control" placeholder="Ad Soyad ile ara..." />
+            </div>
+            <div class="col-md-3">
+                <select id="filtreKurum" class="form-select">
+                    <option value="">-- Tüm Kurumlar --</option>
+                    @if (kurumlar != null)
+                    {
+                        foreach (var k in kurumlar)
+                        {
+                            <option value="@k.KurumAdi">@k.KurumAdi</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select id="filtreMentor" class="form-select">
+                    <option value="">-- Tüm Mentörler --</option>
+                    @if (mentorler != null)
+                    {
+                        foreach (var m in mentorler)
+                        {
+                            <option value="@m.AdSoyad">@m.AdSoyad</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <select id="filtreDurum" class="form-select">
+                    <option value="">-- Tüm Durumlar --</option>
+                    <option value="aktif">Aktif</option>
+                    <option value="pasif">Pasif</option>
+                </select>
+            </div>
+            <div class="col-md-1">
+                <button id="filtreTemizle" class="btn btn-outline-secondary w-100" title="Filtreleri Temizle">Temizle</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-end gap-2 mb-2 no-print">
+    <button onclick="window.print()" class="btn btn-outline-dark btn-sm">🖨️ Yazdır / PDF</button>
+    <button onclick="excelAktar()" class="btn btn-outline-success btn-sm">📊 Excel'e Aktar</button>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="stajyerTablosu">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ad Soyad</th>
+                        <th>Doğum Tarihi</th>
+                        <th>Okul</th>
+                        <th>Bölüm</th>
+                        <th>Başlangıç</th>
+                        <th>Bitiş</th>
+                        <th>Kurum</th>
+                        <th>Mentör</th>
+                        <th>Durum</th>
+                        <th class="text-end no-print">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var stajyer in Model)
+                    {
+                        var kurum = kurumlar?.FirstOrDefault(k => k.Id == stajyer.KurumId);
+                        var mentor = mentorler?.FirstOrDefault(m => m.Id == stajyer.MentorId);
+                        var adSoyad = $"{stajyer.Ad} {stajyer.Soyad}";
+                        <tr data-adsoyad="@adSoyad.ToLower()" data-kurum="@(kurum?.KurumAdi ?? "")" data-mentor="@(mentor?.AdSoyad ?? "")" data-durum="@(stajyer.AktifMi ? "aktif" : "pasif")">
+                            <td><div class="fw-semibold">@adSoyad</div></td>
+                            <td>@stajyer.DogumTarihi.ToShortDateString()</td>
+                            <td>@stajyer.Okul</td>
+                            <td>@stajyer.Bolum</td>
+                            <td>@stajyer.BaslangicTarihi.ToShortDateString()</td>
+                            <td>@(stajyer.BitisTarihi.HasValue? stajyer.BitisTarihi.Value.ToShortDateString() : "-")</td>
+                            <td>
+                                @if (kurum != null)
+                                {
+                                    <span class="badge bg-primary">@kurum.KurumAdi</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>
+                                @if (mentor != null)
+                                {
+                                    <span class="badge bg-success">@mentor.AdSoyad</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td>
+                                @if (stajyer.AktifMi)
+                                {
+                                    <span class="badge bg-info text-dark">Aktif</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Pasif</span>
+                                }
+                            </td>
+                            <td class="text-end no-print">
+                                <a asp-action="Guncelle" asp-route-id="@stajyer.Id" class="btn btn-sm btn-outline-secondary">Düzenle</a>
+                                <a href="#" onclick="stajyerSil('@Url.Action("Sil", "Stajyer", new { id = stajyer.Id })'); return false;" class="btn btn-sm btn-outline-danger">Sil</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<p class="text-muted mt-2 no-print" id="sonucSayisi"></p>
+
+@section Scripts {
+    <style>
+        @@media print {
+            .no-print { display: none !important; }
+            header, nav, footer { display: none !important; }
+            .container { max-width: 100% !important; }
+            .card.shadow-sm { border: none !important; box-shadow: none !important; }
+            h2 { margin-bottom: 10px; }
+            table { font-size: 12px; }
+            .badge { color: #000 !important; background: none !important; border: 1px solid #999; }
+        }
+    </style>
+    <script>
+        function stajyerSil(url) {
+            Swal.fire({
+                title: 'Emin misiniz?',
+                text: 'Bu stajyeri silmek istediğinize emin misiniz?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Evet, sil',
+                cancelButtonText: 'Vazgeç',
+                confirmButtonColor: '#d33'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
+        }
+
+        function filtrele() {
+            const adSoyad = document.getElementById('filtreAdSoyad').value.toLowerCase();
+            const kurum = document.getElementById('filtreKurum').value;
+            const mentor = document.getElementById('filtreMentor').value;
+            const durum = document.getElementById('filtreDurum').value;
+
+            const satirlar = document.querySelectorAll('#stajyerTablosu tbody tr');
+            let gorunenSayi = 0;
+
+            satirlar.forEach(satir => {
+                const satirAdSoyad = satir.dataset.adsoyad || '';
+                const satirKurum = satir.dataset.kurum || '';
+                const satirMentor = satir.dataset.mentor || '';
+                const satirDurum = satir.dataset.durum || '';
+
+                const adSoyadUyuyor = satirAdSoyad.includes(adSoyad);
+                const kurumUyuyor = kurum === '' || satirKurum === kurum;
+                const mentorUyuyor = mentor === '' || satirMentor === mentor;
+                const durumUyuyor = durum === '' || satirDurum === durum;
+
+                if (adSoyadUyuyor && kurumUyuyor && mentorUyuyor && durumUyuyor) {
+                    satir.style.display = '';
+                    gorunenSayi++;
+                } else {
+                    satir.style.display = 'none';
+                }
+            });
+
+            document.getElementById('sonucSayisi').innerText = gorunenSayi + ' kayıt gösteriliyor.';
+        }
+
+        document.getElementById('filtreAdSoyad').addEventListener('input', filtrele);
+        document.getElementById('filtreKurum').addEventListener('change', filtrele);
+        document.getElementById('filtreMentor').addEventListener('change', filtrele);
+        document.getElementById('filtreDurum').addEventListener('change', filtrele);
+        document.getElementById('filtreTemizle').addEventListener('click', function () {
+            document.getElementById('filtreAdSoyad').value = '';
+            document.getElementById('filtreKurum').value = '';
+            document.getElementById('filtreMentor').value = '';
+            document.getElementById('filtreDurum').value = '';
+            filtrele();
+        });
+
+        function excelAktar() {
+            const basliklar = ["Ad Soyad", "Doğum Tarihi", "Okul", "Bölüm", "Başlangıç", "Bitiş", "Kurum", "Mentör", "Durum"];
+            const veriler = [basliklar];
+
+            const satirlar = document.querySelectorAll('#stajyerTablosu tbody tr');
+            satirlar.forEach(satir => {
+                if (satir.style.display === 'none') return;
+
+                const hucreler = satir.querySelectorAll('td');
+                const satirVerisi = [];
+                for (let i = 0; i < 9; i++) {
+                    satirVerisi.push(hucreler[i] ? hucreler[i].innerText.trim() : "");
+                }
+                veriler.push(satirVerisi);
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(veriler);
+            ws['!cols'] = [
+                { wch: 20 }, { wch: 14 }, { wch: 25 }, { wch: 22 },
+                { wch: 14 }, { wch: 14 }, { wch: 18 }, { wch: 18 }, { wch: 10 }
+            ];
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Stajyerler");
+            XLSX.writeFile(wb, "StajyerListesi.xlsx");
+        }
+
+        filtrele();
+    </script>
+}
+<!-- tablonun gövde kısmı-->
+<!--Bu liste 5 tane stajyer içeriyorsa, bu döngü 5 kere çalışır. Her seferinde, listedeki bir sonraki eleman stajyer adlı geçici bir değişkene atanır.
+  Yani ilk turda stajyer = listedeki 1. kişi, ikinci turda stajyer listedeki 2. kişi... bu şekilde devam eder, liste bitene kadar.tıpkı elle 5 kere kopyala-yapıştır yapmış gibi, ama otomatik. -->
+<!--BitisTarihi alanı opsiyonel (DateTime?) — yani null olabilir (staj hâlâ devam ediyorsa). Eğer null olan bir tarihe direkt .ToShortDateString() uygulamaya çalışırsak, program hata verir (çünkü olmayan bir şeyin tarihini formatlayamayız).-->
+<!--stajyer.BitisTarihi.HasValue → "bu alanda gerçekten bir değer var mı?" (true/false)
+? ... : ... → buna "koşul operator" denir, kısaca "eğer öncesi doğruysa :'den önceki, yanlışsa :'den sonraki değeri kullan" demek
+Eğer BitisTarihi'nin bir değeri varsa, onu tarih formatında yaz; yoksa (null ise) sadece '-' işareti yaz.-->

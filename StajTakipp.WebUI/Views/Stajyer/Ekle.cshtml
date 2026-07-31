@@ -1,0 +1,75 @@
+﻿@model StajTakipp.WebUI.Models.StajyerViewModel
+
+<div class="mb-4">
+    <h2>Yeni Stajyer Ekle</h2>
+</div>
+
+<div class="card shadow-sm" style="max-width: 600px;">
+    <div class="card-body">
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+        <form asp-action="Ekle" method="post">
+            <div class="mb-3">
+                <label asp-for="Ad" class="form-label"></label>
+                <input asp-for="Ad" class="form-control" />
+                <span asp-validation-for="Ad" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Soyad" class="form-label"></label>
+                <input asp-for="Soyad" class="form-control" />
+                <span asp-validation-for="Soyad" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="DogumTarihi" class="form-label"></label>
+                <input asp-for="DogumTarihi" class="form-control" />
+                <span asp-validation-for="DogumTarihi" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Okul" class="form-label"></label>
+                <input asp-for="Okul" class="form-control" />
+                <span asp-validation-for="Okul" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Bolum" class="form-label"></label>
+                <input asp-for="Bolum" class="form-control" />
+                <span asp-validation-for="Bolum" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="BaslangicTarihi" class="form-label"></label>
+                    <input asp-for="BaslangicTarihi" class="form-control" />
+                    <span asp-validation-for="BaslangicTarihi" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="BitisTarihi" class="form-label"></label>
+                    <input asp-for="BitisTarihi" class="form-control" />
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Kurum</label>
+                    <select asp-for="KurumId" asp-items="ViewBag.Kurumlar" class="form-select">
+                        <option value="">-- Kurum Seçiniz --</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Mentör</label>
+                    <select asp-for="MentorId" asp-items="ViewBag.Mentorler" class="form-select">
+                        <option value="">-- Mentör Seçiniz --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+                <a asp-action="Listele" class="btn btn-outline-secondary">İptal</a>
+            </div>
+        </form>
+    </div>
+</div>

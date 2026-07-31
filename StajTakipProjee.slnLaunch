@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "StajTakipp.WebUI\\StajTakipp.WebUI.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "StajTakipp.Api\\StajTakipp.Api.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

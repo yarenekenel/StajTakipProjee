@@ -1,0 +1,33 @@
+﻿@model StajTakipp.WebUI.Models.MentorViewModel
+
+<h2>Yeni Mentör Ekle</h2>
+
+<div asp-validation-summary="All" class="text-danger"></div>
+
+<form asp-action="Ekle" method="post">
+    <div>
+        <label>Ad</label>
+        <input asp-for="Ad" class="form-control" />
+        <span asp-validation-for="Ad" class="text-danger"></span>
+    </div>
+    <div>
+        <label>Soyad</label>
+        <input asp-for="Soyad" class="form-control" />
+        <span asp-validation-for="Soyad" class="text-danger"></span>
+    </div>
+    <div>
+        <label>Unvan</label>
+        <input asp-for="Unvan" class="form-control" />
+    </div>
+    <div>
+        <label>Kurum</label>
+        <select asp-for="KurumId" asp-items="ViewBag.Kurumlar" class="form-control">
+            <option value="">-- Kurum Seçiniz --</option>
+        </select>
+    </div>
+    <button type="submit">Kaydet</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

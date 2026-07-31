@@ -1,0 +1,219 @@
+﻿@model List<StajTakipp.WebUI.Models.KurumViewModel>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Kurumlar</h2>
+    <a asp-action="Ekle" class="btn btn-primary">+ Yeni Kurum Ekle</a>
+</div>
+
+@if (TempData["SilmeHatasi"] != null)
+{
+    <div class="alert alert-danger">@TempData["SilmeHatasi"]</div>
+}
+
+<!-- Arama ve Filtreler -->
+<div class="card mb-3 no-print">
+    <div class="card-body">
+        <div class="row g-2">
+            <div class="col-md-4">
+                <input type="text" id="filtreKurumAdi" class="form-control" placeholder="Kurum adı ile ara..." />
+            </div>
+            <div class="col-md-4">
+                <select id="filtreSektor" class="form-select">
+                    <option value="">-- Tüm Sektörler --</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button id="filtreTemizle" class="btn btn-outline-secondary w-100" title="Filtreleri Temizle">Temizle</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex justify-content-end gap-2 mb-2 no-print">
+    <button onclick="window.print()" class="btn btn-outline-dark btn-sm">🖨️ Yazdır / PDF</button>
+    <button onclick="excelAktar()" class="btn btn-outline-success btn-sm">📊 Excel'e Aktar</button>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0" id="kurumTablosu">
+                <thead class="table-light">
+                    <tr>
+                        <th>Kurum Adı</th>
+                        <th>Adres</th>
+                        <th>Telefon</th>
+                        <th>Sektör</th>
+                        <th class="text-end no-print">İşlemler</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var kurum in Model)
+                    {
+                        <tr data-kurumadi="@kurum.KurumAdi.ToLower()" data-sektor="@(kurum.Sektor ?? "")">
+                            <td><div class="fw-semibold">@kurum.KurumAdi</div></td>
+                            <td>@kurum.Adres</td>
+                            <td>@kurum.Telefon</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(kurum.Sektor))
+                                {
+                                    <span class="badge bg-primary">@kurum.Sektor</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td class="text-end no-print">
+                                <a href="#" onclick="kurumSil('@Url.Action("Sil", "Kurum", new { id = kurum.Id })'); return false;" class="btn btn-sm btn-outline-danger">Sil</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<p class="text-muted mt-2 no-print" id="sonucSayisi"></p>
+
+@section Scripts {
+    <style>
+        @@media print {
+            .no-print {
+                display: none !important;
+            }
+
+            header, nav, footer {
+                display: none !important;
+            }
+
+            .container {
+                max-width: 100% !important;
+            }
+
+            .card.shadow-sm {
+                border: none !important;
+                box-shadow: none !important;
+            }
+
+            h2 {
+                margin-bottom: 10px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            .badge {
+                color: #000 !important;
+                background: none !important;
+                border: 1px solid #999;
+            }
+        }
+    </style>
+    <script>
+        function kurumSil(url) {
+            Swal.fire({
+                title: 'Emin misiniz?',
+                text: 'Bu kurumu silmek istediğinize emin misiniz?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Evet, sil',
+                cancelButtonText: 'Vazgeç',
+                confirmButtonColor: '#d33'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
+        }
+
+        // Sektör dropdown'unu tablo verisinden dinamik doldur
+        (function sektorDropdownDoldur() {
+            const select = document.getElementById('filtreSektor');
+            const degerler = new Set();
+            document.querySelectorAll('#kurumTablosu tbody tr').forEach(satir => {
+                const sektor = satir.dataset.sektor;
+                if (sektor) degerler.add(sektor);
+            });
+            [...degerler].sort().forEach(sektor => {
+                const opt = document.createElement('option');
+                opt.value = sektor;
+                opt.textContent = sektor;
+                select.appendChild(opt);
+            });
+        })();
+
+        function filtrele() {
+            const kurumAdi = document.getElementById('filtreKurumAdi').value.toLowerCase();
+            const sektor = document.getElementById('filtreSektor').value;
+
+            const satirlar = document.querySelectorAll('#kurumTablosu tbody tr');
+            let gorunenSayi = 0;
+
+            satirlar.forEach(satir => {
+                const satirKurumAdi = satir.dataset.kurumadi || '';
+                const satirSektor = satir.dataset.sektor || '';
+
+                const kurumAdiUyuyor = satirKurumAdi.includes(kurumAdi);
+                const sektorUyuyor = sektor === '' || satirSektor === sektor;
+
+                if (kurumAdiUyuyor && sektorUyuyor) {
+                    satir.style.display = '';
+                    gorunenSayi++;
+                } else {
+                    satir.style.display = 'none';
+                }
+            });
+
+            document.getElementById('sonucSayisi').innerText = gorunenSayi + ' kayıt gösteriliyor.';
+        }
+
+        document.getElementById('filtreKurumAdi').addEventListener('input', filtrele);
+        document.getElementById('filtreSektor').addEventListener('change', filtrele);
+        document.getElementById('filtreTemizle').addEventListener('click', function () {
+            document.getElementById('filtreKurumAdi').value = '';
+            document.getElementById('filtreSektor').value = '';
+            filtrele();
+        });
+
+        function excelAktar() {
+            const basliklar = ["Kurum Adı", "Adres", "Telefon", "Sektör"];
+            const veriler = [basliklar];
+
+            const satirlar = document.querySelectorAll('#kurumTablosu tbody tr');
+            satirlar.forEach(satir => {
+                if (satir.style.display === 'none') return;
+
+                const hucreler = satir.querySelectorAll('td');
+                const satirVerisi = [];
+                for (let i = 0; i < 4; i++) {
+                    satirVerisi.push(hucreler[i] ? hucreler[i].innerText.trim() : "");
+                }
+                veriler.push(satirVerisi);
+            });
+
+            const ws = XLSX.utils.aoa_to_sheet(veriler);
+            ws['!cols'] = [{ wch: 25 }, { wch: 30 }, { wch: 16 }, { wch: 18 }];
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Kurumlar");
+            XLSX.writeFile(wb, "KurumListesi.xlsx");
+        }
+
+        @if (TempData["BasariMesaji"] != null)
+        {
+                    <text>
+                    Swal.fire({
+                        title: 'Başarılı!',
+                        text: '@TempData["BasariMesaji"]',
+                        icon: 'success',
+                        confirmButtonText: 'Tamam'
+                    });
+                    </text>
+        }
+
+        filtrele();
+    </script>
+}

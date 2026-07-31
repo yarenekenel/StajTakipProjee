@@ -1,12 +1,19 @@
-﻿using StajTakip.Core.Entity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StajTakip.Core.Dto;
 
 namespace StajTakip.Data.Repository
 {
+    public interface IMentorRepository
+    {
+        Task<List<MentorResponse>> GetAllAsync();
+        Task<MentorResponse?> GetByIdAsync(int id);
+        Task<MentorResponse> AddAsync(MentorRequest request);
+        Task UpdateAsync(int id, MentorRequest request);
+        Task<bool> DeleteAsync(int id);
+    }
+
+    /* ================== ESKİ (Entity tabanlı) INTERFACE — yedek ==================
+    using StajTakip.Core.Entity;
+
     public interface IMentorRepository
     {
         Task<List<Mentor>> GetAllAsync();
@@ -15,4 +22,5 @@ namespace StajTakip.Data.Repository
         Task UpdateAsync(Mentor mentor);
         Task<bool> DeleteAsync(int id);
     }
+   */
 }

@@ -47,7 +47,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.MapControllers();
+//app.MapControllers();
 
 app.Run();
 // NEW: Tarih formatý dönüþüm hatalarýný önlemek için yeni eklenen converter sýnýfý.

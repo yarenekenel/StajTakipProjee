@@ -1,11 +1,5 @@
 ﻿using StajTakip.Core.Dto;
-using StajTakip.Core.Entity;
 using StajTakip.Data.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StajTakip.Service.Services
 {
@@ -17,6 +11,34 @@ namespace StajTakip.Service.Services
         {
             _repository = repository;
         }
+
+        public async Task<List<MentorResponse>> GetAllAsync()
+        {
+            return await _repository.GetAllAsync();
+        }
+
+        public async Task<MentorResponse?> GetByIdAsync(int id)
+        {
+            return await _repository.GetByIdAsync(id);
+        }
+
+        public async Task<MentorResponse> AddAsync(MentorRequest request)
+        {
+            return await _repository.AddAsync(request);
+        }
+
+        public async Task UpdateAsync(int id, MentorRequest request)
+        {
+            await _repository.UpdateAsync(id, request);
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            return await _repository.DeleteAsync(id);
+        }
+
+        /* ================== ESKİ (Entity tabanlı) KOD — yedek ==================
+        using StajTakip.Core.Entity;
 
         public async Task<List<MentorResponse>> GetAllAsync()
         {
@@ -40,7 +62,6 @@ namespace StajTakip.Service.Services
                 Unvan = request.Unvan,
                 KurumId = request.KurumId
             };
-
             await _repository.AddAsync(mentor);
             return MapToResponse(mentor);
         }
@@ -49,18 +70,11 @@ namespace StajTakip.Service.Services
         {
             var mentor = await _repository.GetByIdAsync(id);
             if (mentor == null) return;
-
             mentor.Ad = request.Ad;
             mentor.Soyad = request.Soyad;
             mentor.Unvan = request.Unvan;
             mentor.KurumId = request.KurumId;
-
             await _repository.UpdateAsync(mentor);
-        }
-
-        public async Task<bool> DeleteAsync(int id)
-        {
-            return await _repository.DeleteAsync(id);
         }
 
         private static MentorResponse MapToResponse(Mentor m) => new MentorResponse
@@ -71,5 +85,6 @@ namespace StajTakip.Service.Services
             Unvan = m.Unvan,
             KurumId = m.KurumId
         };
+        ================== ESKİ KOD SONU ================== */
     }
 }

@@ -1,15 +1,20 @@
-﻿using StajTakip.Core.Entity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StajTakip.Core.Dto;
 
 namespace StajTakip.Data.Repository
 {
     public interface IKullaniciRepository
     {
-        Task<Kullanici?> GetByKullaniciAdiAsync(string kullaniciAdi);
-        Task AddAsync(Kullanici kullanici);
+        Task<KullaniciAuthDto?> GetByKullaniciAdiAsync(string kullaniciAdi);
+        Task AddAsync(KullaniciAuthDto kullanici);
     }
 }
+
+    /* ================== ESKİ (Entity tabanlı) INTERFACE — yedek ==================
+    using StajTakip.Core.Entity;
+
+    public interface IKullaniciRepository
+    {
+        Task<Kullanici?> GetByKullaniciAdiAsync(string kullaniciAdi);
+        Task AddAsync(Kullanici kullanici);
+    } */
+  

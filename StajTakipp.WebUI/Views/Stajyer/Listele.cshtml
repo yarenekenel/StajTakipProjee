@@ -6,7 +6,11 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="mb-0">Stajyer Listesi</h2>
-    <a asp-action="Ekle" class="btn btn-primary">+ Yeni Stajyer Ekle</a>
+    <div class="d-flex gap-2">
+        <a asp-controller="Mentor" asp-action="Listele" class="btn btn-outline-primary">Mentör Listesi</a>
+        <a asp-controller="Kurum" asp-action="Listele" class="btn btn-outline-secondary">Kurum Listesi</a>
+        <a asp-action="Ekle" class="btn btn-primary">+ Yeni Stajyer Ekle</a>
+    </div>
 </div>
 
 <!-- Arama ve Filtreler -->

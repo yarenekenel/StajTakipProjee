@@ -1,11 +1,5 @@
 ﻿using StajTakip.Core.Dto;
-using StajTakip.Core.Entity;
 using StajTakip.Data.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StajTakip.Service.Services
 {
@@ -17,6 +11,34 @@ namespace StajTakip.Service.Services
         {
             _repository = repository;
         }
+
+        public async Task<List<KurumResponse>> GetAllAsync()
+        {
+            return await _repository.GetAllAsync();
+        }
+
+        public async Task<KurumResponse?> GetByIdAsync(int id)
+        {
+            return await _repository.GetByIdAsync(id);
+        }
+
+        public async Task<KurumResponse> AddAsync(KurumRequest request)
+        {
+            return await _repository.AddAsync(request);
+        }
+
+        public async Task UpdateAsync(int id, KurumRequest request)
+        {
+            await _repository.UpdateAsync(id, request);
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            return await _repository.DeleteAsync(id);
+        }
+
+        /* ================== ESKİ (Entity tabanlı) KOD — yedek ==================
+        using StajTakip.Core.Entity;
 
         public async Task<List<KurumResponse>> GetAllAsync()
         {
@@ -40,7 +62,6 @@ namespace StajTakip.Service.Services
                 Telefon = request.Telefon,
                 Sektor = request.Sektor
             };
-
             await _repository.AddAsync(kurum);
             return MapToResponse(kurum);
         }
@@ -49,18 +70,11 @@ namespace StajTakip.Service.Services
         {
             var kurum = await _repository.GetByIdAsync(id);
             if (kurum == null) return;
-
             kurum.KurumAdi = request.KurumAdi;
             kurum.Adres = request.Adres;
             kurum.Telefon = request.Telefon;
             kurum.Sektor = request.Sektor;
-
             await _repository.UpdateAsync(kurum);
-        }
-
-        public async Task<bool> DeleteAsync(int id)
-        {
-            return await _repository.DeleteAsync(id);
         }
 
         private static KurumResponse MapToResponse(Kurum k) => new KurumResponse
@@ -71,5 +85,6 @@ namespace StajTakip.Service.Services
             Telefon = k.Telefon,
             Sektor = k.Sektor
         };
+        ================== ESKİ KOD SONU ================== */
     }
 }

@@ -1,11 +1,5 @@
 ﻿using StajTakip.Core.Dto;
-using StajTakip.Core.Entity;
 using StajTakip.Data.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StajTakip.Service.Services
 {
@@ -21,15 +15,42 @@ namespace StajTakip.Service.Services
         public async Task<KullaniciResponse?> LoginAsync(LoginRequest request)
         {
             var kullanici = await _repository.GetByKullaniciAdiAsync(request.KullaniciAdi);
-
             if (kullanici == null)
                 return null; // kullanıcı adı bulunamadı
 
             bool sifreDogruMu = BCrypt.Net.BCrypt.Verify(request.Sifre, kullanici.Sifre);
-
             if (!sifreDogruMu)
                 return null; // şifre yanlış
 
+            return new KullaniciResponse
+            {
+                Id = kullanici.Id,
+                KullaniciAdi = kullanici.KullaniciAdi,
+                AdSoyad = kullanici.AdSoyad
+            };
+        }
+
+        public async Task RegisterAsync(LoginRequest request)
+        {
+            var kullanici = new KullaniciAuthDto
+            {
+                KullaniciAdi = request.KullaniciAdi,
+                Sifre = BCrypt.Net.BCrypt.HashPassword(request.Sifre)
+            };
+            await _repository.AddAsync(kullanici);
+        }
+
+        /* ================== ESKİ (Entity tabanlı) KOD — yedek ==================
+        using StajTakip.Core.Entity;
+
+        public async Task<KullaniciResponse?> LoginAsync(LoginRequest request)
+        {
+            var kullanici = await _repository.GetByKullaniciAdiAsync(request.KullaniciAdi);
+            if (kullanici == null)
+                return null;
+            bool sifreDogruMu = BCrypt.Net.BCrypt.Verify(request.Sifre, kullanici.Sifre);
+            if (!sifreDogruMu)
+                return null;
             return new KullaniciResponse
             {
                 Id = kullanici.Id,
@@ -45,8 +66,8 @@ namespace StajTakip.Service.Services
                 KullaniciAdi = request.KullaniciAdi,
                 Sifre = BCrypt.Net.BCrypt.HashPassword(request.Sifre)
             };
-
             await _repository.AddAsync(kullanici);
         }
+        ================== ESKİ KOD SONU ================== */
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using StajTakipp.WebUI.Models;
+using StajTakip.Core.Dto;
+using StajTakip.Service.Services;
 using System.Text;
 using System.Text.Json;
 
@@ -8,6 +10,106 @@ namespace StajTakipp.WebUI.Controllers
 {
     public class MentorController : Controller
     {
+        private readonly IMentorService _mentorService;
+        private readonly IKurumService _kurumService;
+
+        public MentorController(IMentorService mentorService, IKurumService kurumService)
+        {
+            _mentorService = mentorService;
+            _kurumService = kurumService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Ekle()
+        {
+            var kurumResponses = await _kurumService.GetAllAsync();
+            var kurumlar = kurumResponses.Select(k => new KurumViewModel
+            {
+                Id = k.Id,
+                KurumAdi = k.KurumAdi
+            }).ToList();
+
+            ViewBag.Kurumlar = new SelectList(kurumlar, "Id", "KurumAdi");
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Ekle(MentorViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                var kurumResponses2 = await _kurumService.GetAllAsync();
+                var kurumlar2 = kurumResponses2.Select(k => new KurumViewModel
+                {
+                    Id = k.Id,
+                    KurumAdi = k.KurumAdi
+                }).ToList();
+
+                ViewBag.Kurumlar = new SelectList(kurumlar2, "Id", "KurumAdi");
+                return View(model);
+            }
+
+            var request = new MentorRequest
+            {
+                Ad = model.Ad,
+                Soyad = model.Soyad,
+                Unvan = model.Unvan,
+                KurumId = model.KurumId
+            };
+
+            var result = await _mentorService.AddAsync(request);
+
+            if (result != null)
+            {
+                TempData["BasariMesaji"] = "Mentor basariyla kaydedildi.";
+                return RedirectToAction("Listele");
+            }
+
+            ModelState.AddModelError("", "Kayıt sırasında bir hata oluştu.");
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Listele()
+        {
+            var mentorResponses = await _mentorService.GetAllAsync();
+            var mentorler = mentorResponses.Select(m => new MentorViewModel
+            {
+                Id = m.Id,
+                Ad = m.Ad,
+                Soyad = m.Soyad,
+                Unvan = m.Unvan,
+                KurumId = m.KurumId
+            }).ToList();
+
+            var kurumResponses = await _kurumService.GetAllAsync();
+            var kurumlar = kurumResponses.Select(k => new KurumViewModel
+            {
+                Id = k.Id,
+                KurumAdi = k.KurumAdi
+            }).ToList();
+
+            ViewBag.Kurumlar = kurumlar;
+
+            return View(mentorler);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Sil(int id)
+        {
+            var result = await _mentorService.DeleteAsync(id);
+
+            if (!result)
+            {
+                TempData["SilmeHatasi"] = "Bu mentöre bağlı stajyer(ler) olduğu için silinemedi. Önce stajyerlerin mentörünü değiştirin.";
+            }
+
+            return RedirectToAction("Listele");
+        }
+    }
+}
+        /* ================== ESKİ KOD  ==================
+
         private readonly IHttpClientFactory _httpClientFactory;
 
         public MentorController(IHttpClientFactory httpClientFactory)
@@ -82,7 +184,6 @@ namespace StajTakipp.WebUI.Controllers
         {
             var client = _httpClientFactory.CreateClient("StajTakipApi");
 
-            // Mentörleri çek
             var response = await client.GetAsync("api/Mentor");
 
             if (!response.IsSuccessStatusCode)
@@ -97,7 +198,6 @@ namespace StajTakipp.WebUI.Controllers
                     PropertyNameCaseInsensitive = true
                 });
 
-            // Kurumları çek (kurum adını göstermek için)
             var kurumResponse = await client.GetAsync("api/Kurum");
 
             if (kurumResponse.IsSuccessStatusCode)
@@ -131,6 +231,6 @@ namespace StajTakipp.WebUI.Controllers
             }
 
             return RedirectToAction("Listele");
-        }
-    }
-}
+        } */
+
+ 

@@ -16,7 +16,6 @@ C:\Users\Berkay Özenel\source\repos\StajTakipProjee\StajTakipData\obj\Debug\net
 C:\Users\Berkay Özenel\source\repos\StajTakipProjee\StajTakipData\obj\Debug\net8.0\StajTakip.Data.genruntimeconfig.cache
 C:\Users\Berkay Özenel\source\repos\StajTakipProjee\StajTakipData\obj\Debug\net8.0\ref\StajTakip.Data.dll
 C:\Users\Berkay Özenel\Desktop\YAREN\StajTakipProjee\StajTakipData\bin\Debug\net8.0\StajTakip.Data.deps.json
-C:\Users\Berkay Özenel\Desktop\YAREN\StajTakipProjee\StajTakipData\bin\Debug\net8.0\StajTakip.Data.runtimeconfig.json
 C:\Users\Berkay Özenel\Desktop\YAREN\StajTakipProjee\StajTakipData\bin\Debug\net8.0\StajTakip.Data.dll
 C:\Users\Berkay Özenel\Desktop\YAREN\StajTakipProjee\StajTakipData\bin\Debug\net8.0\StajTakip.Data.pdb
 C:\Users\Berkay Özenel\Desktop\YAREN\StajTakipProjee\StajTakipData\bin\Debug\net8.0\StajTakip.Core.dll
@@ -30,5 +29,4 @@ C:\Users\Berkay Özenel\Desktop\YAREN\StajTakipProjee\StajTakipData\obj\Debug\ne
 C:\Users\Berkay Özenel\Desktop\YAREN\StajTakipProjee\StajTakipData\obj\Debug\net8.0\StajTakip.Data.dll
 C:\Users\Berkay Özenel\Desktop\YAREN\StajTakipProjee\StajTakipData\obj\Debug\net8.0\refint\StajTakip.Data.dll
 C:\Users\Berkay Özenel\Desktop\YAREN\StajTakipProjee\StajTakipData\obj\Debug\net8.0\StajTakip.Data.pdb
-C:\Users\Berkay Özenel\Desktop\YAREN\StajTakipProjee\StajTakipData\obj\Debug\net8.0\StajTakip.Data.genruntimeconfig.cache
 C:\Users\Berkay Özenel\Desktop\YAREN\StajTakipProjee\StajTakipData\obj\Debug\net8.0\ref\StajTakip.Data.dll

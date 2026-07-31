@@ -11,4 +11,14 @@
     <Folder Include="Services\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StajTakip.Service\StajTakip.Service.csproj" />
+    <ProjectReference Include="..\StajTakipData\StajTakip.Data.csproj" />
+    <ProjectReference Include="..\StajTakip\StajTakip.Core.csproj" />
+  </ItemGroup>
+
 </Project>

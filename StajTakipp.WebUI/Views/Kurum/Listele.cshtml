@@ -2,7 +2,11 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="mb-0">Kurumlar</h2>
-    <a asp-action="Ekle" class="btn btn-primary">+ Yeni Kurum Ekle</a>
+    <div class="d-flex gap-2">
+        <a asp-controller="Stajyer" asp-action="Listele" class="btn btn-outline-primary">Stajyer Listesi</a>
+        <a asp-controller="Mentor" asp-action="Listele" class="btn btn-outline-secondary">Mentör Listesi</a>
+        <a asp-action="Ekle" class="btn btn-primary">+ Yeni Kurum Ekle</a>
+    </div>
 </div>
 
 @if (TempData["SilmeHatasi"] != null)

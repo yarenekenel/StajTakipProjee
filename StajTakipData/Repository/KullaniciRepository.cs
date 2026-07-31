@@ -1,11 +1,6 @@
-﻿using StajTakip.Core.Entity;
+﻿using Dapper;
+using StajTakip.Core.Dto;
 using StajTakip.Data.Context;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dapper;
 
 namespace StajTakip.Data.Repository
 {
@@ -17,6 +12,28 @@ namespace StajTakip.Data.Repository
         {
             _dbContext = dbContext;
         }
+
+        public async Task<KullaniciAuthDto?> GetByKullaniciAdiAsync(string kullaniciAdi)
+        {
+            using var connection = _dbContext.CreateConnection();
+            const string sql = "SELECT * FROM dbo.Kullanicilar WHERE KullaniciAdi = @KullaniciAdi";
+            return await connection.QueryFirstOrDefaultAsync<KullaniciAuthDto>(sql, new { KullaniciAdi = kullaniciAdi });
+        }
+
+        public async Task AddAsync(KullaniciAuthDto kullanici)
+        {
+            using var connection = _dbContext.CreateConnection();
+            const string sql = @"
+        INSERT INTO dbo.Kullanicilar (KullaniciAdi, Sifre, AdSoyad)
+        VALUES (@KullaniciAdi, @Sifre, @AdSoyad);
+        SELECT CAST(SCOPE_IDENTITY() AS int);";
+
+            var newId = await connection.ExecuteScalarAsync<int>(sql, kullanici);
+            kullanici.Id = newId;
+        }
+
+        /* ================== ESKİ (Entity tabanlı Dapper) KOD — yedek ==================
+        using StajTakip.Core.Entity;
 
         public async Task<Kullanici?> GetByKullaniciAdiAsync(string kullaniciAdi)
         {
@@ -36,5 +53,6 @@ namespace StajTakip.Data.Repository
             var newId = await connection.ExecuteScalarAsync<int>(sql, kullanici);
             kullanici.Id = newId;
         }
+        ================== ESKİ KOD SONU ================== */
     }
 }

@@ -1,12 +1,19 @@
-﻿using StajTakip.Core.Entity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using StajTakip.Core.Dto;
 
 namespace StajTakip.Data.Repository
 {
+    public interface IKurumRepository
+    {
+        Task<List<KurumResponse>> GetAllAsync();
+        Task<KurumResponse?> GetByIdAsync(int id);
+        Task<KurumResponse> AddAsync(KurumRequest request);
+        Task UpdateAsync(int id, KurumRequest request);
+        Task<bool> DeleteAsync(int id);
+    }
+
+    /* ================== ESKİ (Entity tabanlı) INTERFACE — yedek ==================
+    using StajTakip.Core.Entity;
+
     public interface IKurumRepository
     {
         Task<List<Kurum>> GetAllAsync();
@@ -15,4 +22,5 @@ namespace StajTakip.Data.Repository
         Task UpdateAsync(Kurum kurum);
         Task<bool> DeleteAsync(int id);
     }
+ */
 }
